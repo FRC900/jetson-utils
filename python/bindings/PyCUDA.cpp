@@ -30,6 +30,7 @@
 #include "cudaCrop.h"
 #include "cudaFont.h"
 #include "cudaDraw.h"
+#include "cudaTensorConvert.h"
 
 #include "logging.h"
 
@@ -1292,6 +1293,44 @@ PyObject* PyCUDA_ConvertColor( PyObject* self, PyObject* args, PyObject* kwds )
 }
 
 
+// PyCUDA_TensorConvert
+PyObject* PyCUDA_TensorConvert( PyObject* self, PyObject* args, PyObject* kwds )
+{
+
+       // parse arguments
+       PyObject* pyInput  = NULL;
+       PyObject* pyOutput = NULL;
+    float2 range;
+       static char* kwlist[] = {"input", "output", "range", NULL};
+
+       if( !PyArg_ParseTupleAndKeywords(args, kwds, "OO(ff)", kwlist, &pyInput, &pyOutput, &range.x, &range.y))
+       {
+               PyErr_SetString(PyExc_Exception, LOG_PY_UTILS "cudaTensorNormBGR() failed to parse args");
+               return NULL;
+       }
+
+       // get pointers to image data
+       PyCudaImage* input = PyCUDA_GetImage(pyInput);
+       PyCudaImage* output = PyCUDA_GetImage(pyOutput);
+
+       if( !input || !output )
+       {
+               PyErr_SetString(PyExc_Exception, LOG_PY_UTILS "cudaTensorNormBGR() failed to get input/output image pointers (should be cudaImage)");
+               return NULL;
+       }
+
+
+       // run the CUDA function
+       if( CUDA_FAILED(cudaTensorNormBGR(static_cast<void*>(input->base.ptr), input->format, input->width, input->height, static_cast<float*>(output->base.ptr), output->width, output->height, range)) )
+       {
+               PyErr_SetString(PyExc_Exception, LOG_PY_UTILS "cudaTensorNormBGR() failed");
+               return NULL;
+       }
+       // return void
+       Py_RETURN_NONE;
+}
+
+
 // PyCUDA_Resize
 PyObject* PyCUDA_Resize( PyObject* self, PyObject* args, PyObject* kwds )
 {
@@ -2051,6 +2090,7 @@ static PyMethodDef pyCUDA_Functions[] =
 	{ "cudaMemcpy", (PyCFunction)PyCUDA_Memcpy, METH_VARARGS|METH_KEYWORDS, "Copy src image to dst image (or if dst is not provided, return a new image with the contents of src)" },
 	{ "cudaDeviceSynchronize", (PyCFunction)PyCUDA_DeviceSynchronize, METH_NOARGS, "Wait for the GPU to complete all work" },
 	{ "cudaConvertColor", (PyCFunction)PyCUDA_ConvertColor, METH_VARARGS|METH_KEYWORDS, "Perform colorspace conversion on the GPU" },
+    { "cudaTensorConvert", (PyCFunction)PyCUDA_TensorConvert, METH_VARARGS|METH_KEYWORDS, "Resizes, normalizes, converts color and transposes an image" },
 	{ "cudaCrop", (PyCFunction)PyCUDA_Crop, METH_VARARGS|METH_KEYWORDS, "Crop an image on the GPU" },		
 	{ "cudaResize", (PyCFunction)PyCUDA_Resize, METH_VARARGS|METH_KEYWORDS, "Resize an image on the GPU" },
 	{ "cudaNormalize", (PyCFunction)PyCUDA_Normalize, METH_VARARGS|METH_KEYWORDS, "Normalize the pixel intensities of an image between two ranges" },
