@@ -1155,9 +1155,9 @@ PyObject* PyCUDA_TensorConvert( PyObject* self, PyObject* args, PyObject* kwds )
 	PyObject* pyOutput = NULL;
     float2 range;
     cudaStream_t stream;
-	static char* kwlist[] = {"input", "output", NULL};
+	static char* kwlist[] = {"input", "output", "range", "stream", NULL};
 
-	if( !PyArg_ParseTupleAndKeywords(args, kwds, "OO", kwlist, &pyInput, &pyOutput, &range, &stream))
+	if( !PyArg_ParseTupleAndKeywords(args, kwds, "OO(ff)O", kwlist, &pyInput, &pyOutput, &range, &stream))
 	{
 		PyErr_SetString(PyExc_Exception, LOG_PY_UTILS "cudaTensorNormBGR() failed to parse args");
 		return NULL;
@@ -1176,7 +1176,7 @@ PyObject* PyCUDA_TensorConvert( PyObject* self, PyObject* args, PyObject* kwds )
 
 
 	// run the CUDA function
-	if( CUDA_FAILED(cudaTensorConvert(static_cast<float *>(input->base.ptr), input->format, input->width, input->height, static_cast<float *>(output->base.ptr), output->width, output->height, range, stream)) )
+	if( CUDA_FAILED(cudaTensorNormBGR(static_cast<float *>(input->base.ptr), input->format, input->width, input->height, static_cast<float *>(output->base.ptr), output->width, output->height, range, stream)) )
 	{
 		PyErr_SetString(PyExc_Exception, LOG_PY_UTILS "cudaTensorNormBGR() failed");
 		return NULL;
