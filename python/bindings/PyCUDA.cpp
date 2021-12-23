@@ -1179,8 +1179,14 @@ PyObject* PyCUDA_TensorConvert( PyObject* self, PyObject* args, PyObject* kwds )
 
 	std::ofstream file;
 	file.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/TENSORCONVERTREACHED1.txt");
+	file << range.x << "   " << range.y;
+   	file << "\n" << static_cast<void*>(input->base.ptr);
+	file << "\n" << static_cast<float*>(output->base.ptr);
+file << "\n" <<  input->format << "  " << input->width << "  " << input->height;
+file << "\n" << output->width << "  " << output->height;
+	file.close();
 	// run the CUDA function
-	if( CUDA_FAILED(cudaTensorNormBGR(static_cast<void*>(input->base.ptr), input->format, input->width, input->height, static_cast<float*>(output->base.ptr), output->width, output->height, range, NULL)) )
+	if( CUDA_FAILED(cudaTensorNormBGR(static_cast<void*>(input->base.ptr), input->format, input->width, input->height, static_cast<float*>(output->base.ptr), output->width, output->height, range)) )
 	{
 		PyErr_SetString(PyExc_Exception, LOG_PY_UTILS "cudaTensorNormBGR() failed");
 		return NULL;

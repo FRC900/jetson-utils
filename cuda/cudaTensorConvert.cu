@@ -128,7 +128,7 @@ __global__ void gpuTensorNorm( float2 scale, T* input, int iWidth, float* output
 template<bool isBGR>
 cudaError_t launchTensorNorm( void* input, imageFormat format, size_t inputWidth, size_t inputHeight,
 						float* output, size_t outputWidth, size_t outputHeight, 
-						const float2& range, cudaStream_t stream )
+						const float2& range)
 {
 	
 	if( !input || !output )
@@ -147,13 +147,13 @@ cudaError_t launchTensorNorm( void* input, imageFormat format, size_t inputWidth
 	const dim3 gridDim(iDivUp(outputWidth,blockDim.x), iDivUp(outputHeight,blockDim.y));
 
 	if( format == IMAGE_RGB8 )
-		gpuTensorNorm<uchar3, isBGR><<<gridDim, blockDim, 0, stream>>>(scale, (uchar3*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
+		gpuTensorNorm<uchar3, isBGR><<<gridDim, blockDim>>>(scale, (uchar3*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
 	else if( format == IMAGE_RGBA8 )
-		gpuTensorNorm<uchar4, isBGR><<<gridDim, blockDim, 0, stream>>>(scale, (uchar4*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
+		gpuTensorNorm<uchar4, isBGR><<<gridDim, blockDim>>>(scale, (uchar4*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
 	else if( format == IMAGE_RGB32F )
-		gpuTensorNorm<float3, isBGR><<<gridDim, blockDim, 0, stream>>>(scale, (float3*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
+		gpuTensorNorm<float3, isBGR><<<gridDim, blockDim>>>(scale, (float3*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
 	else if( format == IMAGE_RGBA32F )
-		gpuTensorNorm<float4, isBGR><<<gridDim, blockDim, 0, stream>>>(scale, (float4*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
+		gpuTensorNorm<float4, isBGR><<<gridDim, blockDim>>>(scale, (float4*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
 	else
 		return cudaErrorInvalidValue;
 
@@ -165,17 +165,17 @@ cudaError_t cudaTensorNormRGB( void* input, imageFormat format, size_t inputWidt
 						 float* output, size_t outputWidth, size_t outputHeight,
 						 const float2& range, cudaStream_t stream )
 {
-	return launchTensorNorm<false>(input, format, inputWidth, inputHeight, output, outputWidth, outputHeight, range, stream);
+	return launchTensorNorm<false>(input, format, inputWidth, inputHeight, output, outputWidth, outputHeight, range);
 }
 
 // cudaTensorNormBGR
 cudaError_t cudaTensorNormBGR( void* input, imageFormat format, size_t inputWidth, size_t inputHeight,
 						 float* output, size_t outputWidth, size_t outputHeight,
-						 const float2& range, cudaStream_t stream )
+						 const float2& range)
 {
 	std::ofstream file;
 	file.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/TENSORNORMLAUNCHED.txt");
-	return launchTensorNorm<true>(input, format, inputWidth, inputHeight, output, outputWidth, outputHeight, range, stream);
+	return launchTensorNorm<true>(input, format, inputWidth, inputHeight, output, outputWidth, outputHeight, range);
 }
 
 

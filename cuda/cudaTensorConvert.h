@@ -38,7 +38,7 @@ cudaError_t cudaTensorMeanBGR( void* input, imageFormat format, size_t inputWidt
  * Downsample and apply pixel normalization, NCHW format
  */
 cudaError_t cudaTensorNormRGB( void* input, imageFormat format, size_t inputWidth, size_t inputHeight, float* output, size_t outputWidth, size_t outputHeight, const float2& range, cudaStream_t stream );
-cudaError_t cudaTensorNormBGR(void* input, imageFormat format, size_t inputWidth, size_t inputHeight, float* output, size_t outputWidth, size_t outputHeight, const float2& range, cudaStream_t stream );
+cudaError_t cudaTensorNormBGR(void* input, imageFormat format, size_t inputWidth, size_t inputHeight, float* output, size_t outputWidth, size_t outputHeight, const float2& range);
 
 /*
  * Downsample and apply pixel normalization, mean pixel subtraction and standard deviation, NCHW format
