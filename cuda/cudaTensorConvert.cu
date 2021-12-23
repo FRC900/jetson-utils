@@ -143,18 +143,12 @@ cudaError_t launchTensorNorm( void* input, imageFormat format, size_t inputWidth
 							    float(inputHeight) / float(outputHeight) );
 
 	const float multiplier = (range.y - range.x) / 255.0f;
-    std::ofstream scalefile;
-    scalefile.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/TENSORscaleMULTIPLER.txt");
-	scalefile << "Scale.x is=" << scale.x << " .y=" << scale.y << " multiplier is=" << multiplier;
 	
 	
 	// launch kernel
 	const dim3 blockDim(8, 8);
 	const dim3 gridDim(iDivUp(outputWidth,blockDim.x), iDivUp(outputHeight,blockDim.y));
 	    std::ofstream myfile;
-    myfile.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/TENSORblockdim.txt");
-	myfile << "blockDim.x=" << blockDim.x << " blockDim.y=" << blockDim.y;
-	myfile << "griddim.x=" << gridDim.x << " gridDim.y=" << gridDim.y;
 	//added BGR options
 	if( format == IMAGE_RGB8 || (format == IMAGE_BGR8))
 		gpuTensorNorm<uchar3, isBGR><<<gridDim, blockDim>>>(scale, (uchar3*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
@@ -183,8 +177,6 @@ cudaError_t cudaTensorNormBGR( void* input, imageFormat format, size_t inputWidt
 						 float* output, size_t outputWidth, size_t outputHeight,
 						 const float2& range)
 {
-	std::ofstream file;
-	file.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/TENSORNORMLAUNCHED.txt");
 	return launchTensorNorm<true>(input, format, inputWidth, inputHeight, output, outputWidth, outputHeight, range);
 }
 
@@ -221,7 +213,6 @@ cudaError_t launchTensorNormMean( void* input, imageFormat format, size_t inputW
 						    const float2& range, const float3& mean, const float3& stdDev,
 						    cudaStream_t stream )
 {
-	std::cout << "LAUNCHING TENSOR NORM MEAN!!!!!" << std::endl;
 	if( !input || !output )
 		return cudaErrorInvalidDevicePointer;
 
