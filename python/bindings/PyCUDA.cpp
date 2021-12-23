@@ -1191,7 +1191,8 @@ file << "\n" << output->width << "  " << output->height;
 		PyErr_SetString(PyExc_Exception, LOG_PY_UTILS "cudaTensorNormBGR() failed");
 		return NULL;
 	}
-
+	 std::ofstream filee;
+    filee.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/IRANAFUNCTION.txt");
 	// return void
 	Py_RETURN_NONE;
 }

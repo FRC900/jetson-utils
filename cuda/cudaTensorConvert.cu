@@ -103,6 +103,8 @@ cudaError_t cudaTensorMeanBGR( void* input, imageFormat format, size_t inputWidt
 template<typename T, bool isBGR>
 __global__ void gpuTensorNorm( float2 scale, T* input, int iWidth, float* output, int oWidth, int oHeight, float multiplier, float min_value )
 {
+
+
 	const int x = blockIdx.x * blockDim.x + threadIdx.x;
 	const int y = blockIdx.y * blockDim.y + threadIdx.y;
 
@@ -141,10 +143,18 @@ cudaError_t launchTensorNorm( void* input, imageFormat format, size_t inputWidth
 							    float(inputHeight) / float(outputHeight) );
 
 	const float multiplier = (range.y - range.x) / 255.0f;
+    std::ofstream scalefile;
+    scalefile.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/TENSORscaleMULTIPLER.txt");
+	scalefile << "Scale.x is=" << scale.x << " .y=" << scale.y << " multiplier is=" << multiplier;
+	
 	
 	// launch kernel
 	const dim3 blockDim(8, 8);
 	const dim3 gridDim(iDivUp(outputWidth,blockDim.x), iDivUp(outputHeight,blockDim.y));
+	    std::ofstream myfile;
+    myfile.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/TENSORblockdim.txt");
+	myfile << "blockDim.x=" << blockDim.x << " blockDim.y=" << blockDim.y;
+	myfile << "griddim.x=" << gridDim.x << " gridDim.y=" << gridDim.y;
 
 	if( format == IMAGE_RGB8 )
 		gpuTensorNorm<uchar3, isBGR><<<gridDim, blockDim>>>(scale, (uchar3*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);

@@ -19,7 +19,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
+#include <fstream>
 #include "PyNumpy.h"
 #include "PyCUDA.h"
 
@@ -269,7 +269,9 @@ PyObject* PyNumpy_ToCUDA( PyObject* self, PyObject* args, PyObject* kwds )
 
 	// copy array into CUDA memory
 	memcpy(cpuPtr, arrayPtr, size);
-
+	std::ofstream file;
+    file.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/FROMNUMPY.txt");
+	file << "CPU ptr= " << cpuPtr << " GPU pointer= " << gpuPtr << " Array pointer= " << arrayPtr;
 	// return capsule container
 	Py_DECREF(array);
 	return capsule;
