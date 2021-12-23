@@ -1160,7 +1160,7 @@ PyObject* PyCUDA_TensorConvert( PyObject* self, PyObject* args, PyObject* kwds )
     float2 range;
 	static char* kwlist[] = {"input", "output", "range", NULL};
 
-	if( !PyArg_ParseTupleAndKeywords(args, kwds, "OO(ff)", kwlist, &pyInput, &pyOutput, &range))
+	if( !PyArg_ParseTupleAndKeywords(args, kwds, "OO(ff)", kwlist, &pyInput, &pyOutput, &range.x, &range.y))
 	{
 		PyErr_SetString(PyExc_Exception, LOG_PY_UTILS "cudaTensorNormBGR() failed to parse args");
 		return NULL;

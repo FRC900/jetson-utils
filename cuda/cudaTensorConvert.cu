@@ -155,14 +155,14 @@ cudaError_t launchTensorNorm( void* input, imageFormat format, size_t inputWidth
     myfile.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/TENSORblockdim.txt");
 	myfile << "blockDim.x=" << blockDim.x << " blockDim.y=" << blockDim.y;
 	myfile << "griddim.x=" << gridDim.x << " gridDim.y=" << gridDim.y;
-
-	if( format == IMAGE_RGB8 )
+	//added BGR options
+	if( format == IMAGE_RGB8 || (format == IMAGE_BGR8))
 		gpuTensorNorm<uchar3, isBGR><<<gridDim, blockDim>>>(scale, (uchar3*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
-	else if( format == IMAGE_RGBA8 )
+	else if( format == IMAGE_RGBA8 || (format == IMAGE_BGRA8))
 		gpuTensorNorm<uchar4, isBGR><<<gridDim, blockDim>>>(scale, (uchar4*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
-	else if( format == IMAGE_RGB32F )
+	else if( format == IMAGE_RGB32F || (format == IMAGE_BGR32F))
 		gpuTensorNorm<float3, isBGR><<<gridDim, blockDim>>>(scale, (float3*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
-	else if( format == IMAGE_RGBA32F )
+	else if( format == IMAGE_RGBA32F || (format == IMAGE_BGRA32F))
 		gpuTensorNorm<float4, isBGR><<<gridDim, blockDim>>>(scale, (float4*)input, inputWidth, output, outputWidth, outputHeight, multiplier, range.x);
 	else
 		return cudaErrorInvalidValue;
