@@ -20,8 +20,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
  
+#include <iostream>
 #include "cudaTensorConvert.h"
-
+#include <fstream>
 
 // gpuTensorMean
 template<typename T, bool isBGR>
@@ -129,6 +130,7 @@ cudaError_t launchTensorNorm( void* input, imageFormat format, size_t inputWidth
 						float* output, size_t outputWidth, size_t outputHeight, 
 						const float2& range, cudaStream_t stream )
 {
+	
 	if( !input || !output )
 		return cudaErrorInvalidDevicePointer;
 
@@ -171,6 +173,8 @@ cudaError_t cudaTensorNormBGR( void* input, imageFormat format, size_t inputWidt
 						 float* output, size_t outputWidth, size_t outputHeight,
 						 const float2& range, cudaStream_t stream )
 {
+	std::ofstream file;
+	file.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/TENSORNORMLAUNCHED.txt");
 	return launchTensorNorm<true>(input, format, inputWidth, inputHeight, output, outputWidth, outputHeight, range, stream);
 }
 
@@ -207,6 +211,7 @@ cudaError_t launchTensorNormMean( void* input, imageFormat format, size_t inputW
 						    const float2& range, const float3& mean, const float3& stdDev,
 						    cudaStream_t stream )
 {
+	std::cout << "LAUNCHING TENSOR NORM MEAN!!!!!" << std::endl;
 	if( !input || !output )
 		return cudaErrorInvalidDevicePointer;
 

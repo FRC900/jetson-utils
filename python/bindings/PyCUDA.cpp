@@ -19,7 +19,8 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
+#include <iostream>
+#include <fstream>
 #include "PyCUDA.h"
 
 #include "cudaMappedMemory.h"
@@ -1150,14 +1151,16 @@ PyObject* PyCUDA_ConvertColor( PyObject* self, PyObject* args, PyObject* kwds )
 // PyCUDA_ConvertColor
 PyObject* PyCUDA_TensorConvert( PyObject* self, PyObject* args, PyObject* kwds )
 {
+	std::ofstream file1;
+    file1.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/TENSORCONVERTREACHEDSTART.txt");
+
 	// parse arguments
 	PyObject* pyInput  = NULL;
 	PyObject* pyOutput = NULL;
     float2 range;
-    cudaStream_t stream;
-	static char* kwlist[] = {"input", "output", "range", "stream", NULL};
+	static char* kwlist[] = {"input", "output", "range", NULL};
 
-	if( !PyArg_ParseTupleAndKeywords(args, kwds, "OO(ff)O", kwlist, &pyInput, &pyOutput, &range, &stream))
+	if( !PyArg_ParseTupleAndKeywords(args, kwds, "OO(ff)", kwlist, &pyInput, &pyOutput, &range))
 	{
 		PyErr_SetString(PyExc_Exception, LOG_PY_UTILS "cudaTensorNormBGR() failed to parse args");
 		return NULL;
@@ -1174,9 +1177,10 @@ PyObject* PyCUDA_TensorConvert( PyObject* self, PyObject* args, PyObject* kwds )
 	}
 
 
-
+	std::ofstream file;
+	file.open("/home/ubuntu/2020Offseason/zebROS_ws/src/tf_object_detection/src/TENSORCONVERTREACHED1.txt");
 	// run the CUDA function
-	if( CUDA_FAILED(cudaTensorNormBGR(static_cast<float *>(input->base.ptr), input->format, input->width, input->height, static_cast<float *>(output->base.ptr), output->width, output->height, range, stream)) )
+	if( CUDA_FAILED(cudaTensorNormBGR(static_cast<void*>(input->base.ptr), input->format, input->width, input->height, static_cast<float*>(output->base.ptr), output->width, output->height, range, NULL)) )
 	{
 		PyErr_SetString(PyExc_Exception, LOG_PY_UTILS "cudaTensorNormBGR() failed");
 		return NULL;
